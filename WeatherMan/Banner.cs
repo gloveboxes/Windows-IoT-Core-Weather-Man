@@ -51,15 +51,17 @@ namespace HeadlessAdapterApp
         {
             double temperature = 0;
             int oldTemp = 0;
+            DateTime lastSpoke = DateTime.Now;
 
             while (true)
             {
                 temperature = bmp180.Temperature.DegreesCelsius;
 
-                if (Convert.ToInt32(Math.Round(temperature,0)) != oldTemp)
+                if ((int)temperature != oldTemp && lastSpoke.AddMinutes(1) > DateTime.Now)
                 {
                     Speak("The temperature is now " + Math.Round(temperature, 1) + " degrees celsius");
-                    oldTemp = Convert.ToInt32(Math.Round(temperature,0));
+                    oldTemp = (int)temperature;
+                    lastSpoke = DateTime.Now;
                 }
 
                 string msg = string.Format("{0}, {1}C, {2}hPa, {3} ", preMessage, Math.Round(temperature, 1), Math.Round(bmp180.Pressure.Hectopascals, 0), postMessage);
